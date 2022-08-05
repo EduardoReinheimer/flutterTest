@@ -14,6 +14,7 @@ class RandonWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandonWords> {
   final _suggestions = <WordPair>[];
+  final _saved = <WordPair>{};
   final _biggerFront = const TextStyle(fontSize: 18);
   @override
   Widget build(BuildContext context) {
@@ -26,11 +27,27 @@ class _RandomWordsState extends State<RandonWords> {
           if (index >= _suggestions.length) {
             _suggestions.addAll(generateWordPairs().take(10));
           }
+
+          final alreadySaved = _saved.contains(_suggestions[index]);
           return ListTile(
             title: Text(
               _suggestions[index].asPascalCase,
               style: _biggerFront,
             ),
+            trailing: Icon(
+              alreadySaved ? Icons.favorite : Icons.favorite_border,
+              color: alreadySaved ? Colors.red : null,
+              semanticLabel: alreadySaved ? 'Remove from saved' : 'Saved',
+            ),
+            onTap: () {
+              setState(() {
+                if (alreadySaved) {
+                  _saved.remove(_suggestions[index]);
+                } else {
+                  _saved.add(_suggestions[index]);
+                }
+              });
+            },
           );
         });
   }
